@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Positioning, Z-index & Overflow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .presentation-container {
+            width: 90%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .slide {
+            padding: 40px;
+            min-height: 600px;
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-left: 5px solid #e74c3c;
+            padding-left: 20px;
+        }
+
+        h3 {
+            color: #2980b9;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        p, li {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        ul {
+            padding-left: 30px;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .example-container {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .demo-box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            text-align: center;
+            line-height: 100px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .static-demo { background: #3498db; }
+        .relative-demo { background: #e74c3c; position: relative; top: 20px; left: 20px; }
+        .absolute-demo { background: #2ecc71; position: absolute; top: 50px; left: 200px; }
+        .fixed-demo { background: #f39c12; position: fixed; top: 10px; right: 10px; }
+        .sticky-demo { background: #9b59b6; position: sticky; top: 0; }
+
+        .navigation {
+            background: #34495e;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .nav-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #ecf0f1;
+            margin: 0 20px;
+            font-size: 18px;
+        }
+
+        .z-index-demo {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+        }
+
+        .z-box {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            color: white;
+            text-align: center;
+            line-height: 120px;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+
+        .z-box1 { background: #e74c3c; top: 20px; left: 20px; z-index: 1; }
+        .z-box2 { background: #3498db; top: 60px; left: 60px; z-index: 2; }
+        .z-box3 { background: #2ecc71; top: 100px; left: 100px; z-index: 3; }
+
+        .overflow-demo {
+            width: 300px;
+            height: 150px;
+            border: 2px solid #34495e;
+            margin: 20px 0;
+        }
+
+        .overflow-visible { overflow: visible; }
+        .overflow-hidden { overflow: hidden; }
+        .overflow-scroll { overflow: scroll; }
+        .overflow-auto { overflow: auto; }
+
+        .overflow-content {
+            width: 400px;
+            height: 200px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .practice-problem {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .solution {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background: #f1c40f;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .sticky-header-demo {
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+        }
+
+        .sticky-header {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .content-section {
+            padding: 20px;
+            height: 150px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            .demo-box {
+                width: 80px;
+                height: 80px;
+                line-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>CSS Positioning, Z-index & Overflow</h1>
+            <div style="text-align: center; margin-top: 50px;">
+                <h2 style="border: none; padding: 0;">Lecture 7</h2>
+                <p style="font-size: 1.3em; color: #7f8c8d; margin-top: 30px;">
+                    Master the art of element positioning and layout control
+                </p>
+                <div style="margin-top: 40px;">
+                    <h3>Today's Agenda:</h3>
+                    <ul style="text-align: left; display: inline-block; margin-top: 20px;">
+                        <li>Understanding CSS Positioning (static, relative, absolute, fixed, sticky)</li>
+                        <li>Z-index and Stacking Context</li>
+                        <li>Overflow Properties</li>
+                        <li>Real-world Examples</li>
+                        <li>Practice Problems & Solutions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: CSS Positioning Overview -->
+        <div class="slide">
+            <h2>CSS Positioning Overview</h2>
+            <p>CSS positioning allows you to control exactly where elements appear on the page. There are 5 main positioning values:</p>
+            
+            <div class="example-container">
+                <h3>Position Values:</h3>
+                <ul>
+                    <li><span class="highlight">static</span> - Default positioning (normal document flow)</li>
+                    <li><span class="highlight">relative</span> - Positioned relative to its normal position</li>
+                    <li><span class="highlight">absolute</span> - Positioned relative to nearest positioned ancestor</li>
+                    <li><span class="highlight">fixed</span> - Positioned relative to viewport (stays in place when scrolling)</li>
+                    <li><span class="highlight">sticky</span> - Switches between relative and fixed based on scroll position</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+.element {
+    position: relative; /* or absolute, fixed, sticky */
+    top: 20px;     /* Distance from top */
+    left: 30px;    /* Distance from left */
+    right: 10px;   /* Distance from right */
+    bottom: 15px;  /* Distance from bottom */
+}
+            </div>
+        </div>
+
+        <!-- Slide 3: Static Positioning -->
+        <div class="slide">
+            <h2>Static Positioning (Default)</h2>
+            <p>Elements with <span class="highlight">position: static</span> are positioned according to the normal document flow. Top, right, bottom, and left properties have no effect.</p>
+            
+            <div class="example-container">
+                <h3>Example:</h3>
+                <div class="demo-box static-demo">Static</div>
+                <div class="demo-box static-demo">Static</div>
+                <div class="demo-box static-demo">Static</div>
+                <p><strong>Real-life analogy:</strong> Like people standing in a queue - each person takes their natural position one after another.</p>
+            </div>
+
+            <div class="code-block">
+.static-box {
+    position: static; /* Default value */
+    background: #3498db;
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+            </div>
+
+            <p><strong>Use Cases:</strong> Default behavior for most elements like paragraphs, divs, headers, etc.</p>
+        </div>
+
+        <!-- Slide 4: Relative Positioning -->
+        <div class="slide">
+            <h2>Relative Positioning</h2>
+            <p>Elements with <span class="highlight">position: relative</span> are positioned relative to their normal position. The element still occupies its original space in the document flow.</p>
+            
+            <div class="example-container">
+                <h3>Example:</h3>
+                <div class="demo-box static-demo">Normal</div>
+                <div class="demo-box relative-demo">Relative</div>
+                <div class="demo-box static-demo">Normal</div>
+                <p><strong>Real-life analogy:</strong> Like a person in a queue who leans slightly to the side - they still hold their place in line.</p>
+            </div>
+
+            <div class="code-block">
+.relative-box {
+    position: relative;
+    top: 20px;    /* Moves 20px down from normal position */
+    left: 20px;   /* Moves 20px right from normal position */
+    background: #e74c3c;
+}
+            </div>
+
+            <p><strong>Use Cases:</strong> Fine-tuning element positions, creating a positioning context for absolute children.</p>
+        </div>
+
+        <!-- Slide 5: Absolute Positioning -->
+        <div class="slide">
+            <h2>Absolute Positioning</h2>
+            <p>Elements with <span class="highlight">position: absolute</span> are removed from the normal document flow and positioned relative to their nearest positioned ancestor.</p>
+            
+            <div class="example-container" style="position: relative; height: 200px;">
+                <h3>Example:</h3>
+                <div class="demo-box static-demo">Normal</div>
+                <div class="demo-box absolute-demo">Absolute</div>
+                <div class="demo-box static-demo">Normal</div>
+                <p><strong>Real-life analogy:</strong> Like a drone that can hover anywhere above the ground, independent of the queue below.</p>
+            </div>
+
+            <div class="code-block">
+.absolute-box {
+    position: absolute;
+    top: 50px;    /* 50px from top of positioned parent */
+    left: 200px;  /* 200px from left of positioned parent */
+    background: #2ecc71;
+}
+            </div>
+
+            <p><strong>Use Cases:</strong> Tooltips, modal overlays, dropdown menus, image overlays.</p>
+        </div>
+
+        <!-- Slide 6: Fixed Positioning -->
+        <div class="slide">
+            <h2>Fixed Positioning</h2>
+            <p>Elements with <span class="highlight">position: fixed</span> are positioned relative to the viewport and stay in place when scrolling.</p>
+            
+            <div class="example-container">
+                <h3>Example:</h3>
+                <div class="demo-box fixed-demo">Fixed</div>
+                <p><strong>Real-life analogy:</strong> Like a security camera mounted on the ceiling - it stays in the same position regardless of what moves below it.</p>
+                <p><em>Note: The orange "Fixed" box above is positioned fixed to the top-right corner of your screen!</em></p>
+            </div>
+
+            <div class="code-block">
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #f39c12;
+    z-index: 1000;
+}
+            </div>
+
+            <p><strong>Use Cases:</strong> Navigation bars, floating action buttons, cookie banners, chat widgets.</p>
+        </div>
+
+        <!-- Slide 7: Sticky Positioning -->
+        <div class="slide">
+            <h2>Sticky Positioning</h2>
+            <p>Elements with <span class="highlight">position: sticky</span> switch between relative and fixed positioning based on scroll position.</p>
+            
+            <div class="example-container">
+                <h3>Interactive Example:</h3>
+                <div class="sticky-header-demo">
+                    <div class="sticky-header">Sticky Header - Scroll to see me stick!</div>
+                    <div class="content-section">
+                        <h4>Section 1</h4>
+                        <p>This is some content. Keep scrolling to see the sticky header in action.</p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Section 2</h4>
+                        <p>More content here. Notice how the header stays at the top when you scroll.</p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Section 3</h4>
+                        <p>Even more content. The sticky header remains visible throughout scrolling.</p>
+                    </div>
+                </div>
+                <p><strong>Real-life analogy:</strong> Like a bookmark that slides along with you as you read, but sticks to the top of the page when you reach it.</p>
+            </div>
+
+            <div class="code-block">
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    background: #9b59b6;
+    z-index: 100;
+}
+            </div>
+        </div>
+
+        <!-- Slide 8: Z-index Introduction -->
+        <div class="slide">
+            <h2>Understanding Z-index</h2>
+            <p>Z-index controls the stacking order of positioned elements. Higher z-index values appear in front of lower values.</p>
+            
+            <div class="example-container">
+                <h3>Visual Example:</h3>
+                <div class="z-index-demo">
+                    <div class="z-box z-box1">Z: 1</div>
+                    <div class="z-box z-box2">Z: 2</div>
+                    <div class="z-box z-box3">Z: 3</div>
+                </div>
+                <p><strong>Real-life analogy:</strong> Like stacking papers on a desk - the paper with the highest number goes on top.</p>
+            </div>
+
+            <div class="code-block">
+.layer-1 { z-index: 1; }  /* Bottom layer */
+.layer-2 { z-index: 2; }  /* Middle layer */
+.layer-3 { z-index: 3; }  /* Top layer */
+
+/* Negative z-index sends elements behind normal flow */
+.background { z-index: -1; }
+            </div>
+
+            <p><strong>Important:</strong> Z-index only works on positioned elements (relative, absolute, fixed, sticky).</p>
+        </div>
+
+        <!-- Slide 9: Stacking Context -->
+        <div class="slide">
+            <h2>Stacking Context</h2>
+            <p>A stacking context is a 3D conceptualization of HTML elements. Elements with certain CSS properties create new stacking contexts.</p>
+            
+            <div class="example-container">
+                <h3>What Creates Stacking Context:</h3>
+                <ul>
+                    <li>Root element (html)</li>
+                    <li>Position: absolute/relative with z-index other than auto</li>
+                    <li>Position: fixed/sticky</li>
+                    <li>Opacity less than 1</li>
+                    <li>Transform, filter, perspective properties</li>
+                    <li>Flexbox/Grid children with z-index</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* This creates a new stacking context */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    opacity: 0.9;
+    transform: translateX(0);
+}
+
+/* Children compete within this context */
+.modal-header { z-index: 2; }
+.modal-body { z-index: 1; }
+            </div>
+
+            <p><strong>Key Rule:</strong> Elements cannot escape their stacking context to compete with elements in a parent stacking context.</p>
+        </div>
+
+        <!-- Slide 10: Overflow Properties -->
+        <div class="slide">
+            <h2>Overflow Properties</h2>
+            <p>The overflow property controls what happens when content is too large for its container.</p>
+            
+            <div class="example-container">
+                <h3>Overflow Values:</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>overflow: visible (default)</h4>
+                        <div class="overflow-demo overflow-visible">
+                            <div class="overflow-content">This content overflows and is visible outside its container boundaries.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>overflow: hidden</h4>
+                        <div class="overflow-demo overflow-hidden">
+                            <div class="overflow-content">This content is clipped and hidden when it exceeds the container.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>overflow: scroll</h4>
+                        <div class="overflow-demo overflow-scroll">
+                            <div class="overflow-content">This content gets scrollbars to access the overflow content.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>overflow: auto</h4>
+                        <div class="overflow-demo overflow-auto">
+                            <div class="overflow-content">This content gets scrollbars only when needed.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Overflow Examples -->
+        <div class="slide">
+            <h2>Overflow in Practice</h2>
+            <p>Different overflow values serve different purposes in real applications.</p>
+            
+            <div class="code-block">
+/* Image gallery with horizontal scroll */
+.gallery {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+/* Chat message container */
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* Tooltip with text clipping */
+.tooltip {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+            </div>
+
+            <div class="example-container">
+                <h3>Real-world Applications:</h3>
+                <ul>
+                    <li><strong>overflow: auto</strong> - Chat windows, code editors, content areas</li>
+                    <li><strong>overflow: hidden</strong> - Image containers, card layouts, animations</li>
+                    <li><strong>overflow: scroll</strong> - Data tables, long lists, embedded content</li>
+                    <li><strong>overflow-x/overflow-y</strong> - Horizontal galleries, vertical timelines</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: Practice Problem 1 -->
+        <div class="slide">
+            <h2>Practice Problem 1</h2>
+            <div class="practice-problem">
+                <h3>🎯 Challenge: Create a Sticky Navigation</h3>
+                <p><strong>Task:</strong> Create a navigation bar that:</p>
+                <ul>
+                    <li>Starts 100px from the top of the page</li>
+                    <li>Becomes sticky when scrolling</li>
+                    <li>Stays visible at the top during scroll</li>
+                    <li>Has a semi-transparent background</li>
+                    <li>Contains navigation links</li>
+                </ul>
+                <p><strong>Requirements:</strong> Use HTML structure with header, nav, and main content sections.</p>
+            </div>
+
+            <div class="code-block">
+<!-- HTML Structure -->
+&lt;header&gt;
+    &lt;h1&gt;My Website&lt;/h1&gt;
+&lt;/header&gt;
+&lt;nav class="sticky-nav"&gt;
+    &lt;a href="#home"&gt;Home&lt;/a&gt;
+    &lt;a href="#about"&gt;About&lt;/a&gt;
+    &lt;a href="#services"&gt;Services&lt;/a&gt;
+    &lt;a href="#contact"&gt;Contact&lt;/a&gt;
+&lt;/nav&gt;
+&lt;main&gt;
+    &lt;!-- Long content here --&gt;
+&lt;/main&gt;
+            </div>
+
+            <p><strong>Think about:</strong> Which positioning value to use? How to handle the background? What about z-index?</p>
+        </div>
+
+        <!-- Slide 13: Solution 1 -->
+        <div class="slide">
+            <h2>Solution 1: Sticky Navigation</h2>
+            <div class="solution">
+                <h3>✅ Solution Explanation</h3>
+                <p>We use <span class="highlight">position: sticky</span> with <span class="highlight">top: 0</span> to make the navigation stick to the top when scrolling.</p>
+            </div>
+
+            <div class="code-block">
+/* CSS Solution */
+header {
+    height: 150px;
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    background: rgba(52, 73, 94, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.sticky-nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.sticky-nav a:hover {
+    background: rgba(255,255,255,0.2);
+}
+            </div>
+
+            <p><strong>Key Concepts Applied:</strong> Sticky positioning, z-index stacking, semi-transparent backgrounds, and smooth transitions.</p>
+        </div>
+
+        <!-- Slide 14: Practice Problem 2 -->
+        <div class="slide">
+            <h2>Practice Problem 2</h2>
+            <div class="practice-problem">
+                <h3>🎯 Challenge: Modal Dialog with Overlay</h3>
+                <p><strong>Task:</strong> Create a modal dialog that:</p>
+                <ul>
+                    <li>Appears centered on screen</li>
+                    <li>Has a semi-transparent dark overlay behind it</li>
+                    <li>Contains a close button in the top-right corner</li>
+                    <li>Modal content should be scrollable if too long</li>
+                    <li>Should appear above all other content</li>
+                </ul>
+                <p><strong>Bonus:</strong> Add a subtle animation when the modal appears.</p>
+            </div>
+
+            <div class="code-block">
+<!-- HTML Structure -->
+&lt;div class="modal-overlay"&gt;
+    &lt;div class="modal"&gt;
+        &lt;button class="close-btn"&gt;×&lt;/button&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;h2&gt;Modal Title&lt;/h2&gt;
+            &lt;p&gt;Modal content goes here...&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+
+            <p><strong>Think about:</strong> How to center the modal? What z-index values to use? How to handle overflow for long content?</p>
+        </div>
+
+        <!-- Slide 15: Solution 2 -->
+        <div class="slide">
+            <h2>Solution 2: Modal Dialog</h2>
+            <div class="solution">
+                <h3>✅ Solution Explanation</h3>
+                <p>We use <span class="highlight">position: fixed</span> for the overlay and modal, with <span class="highlight">absolute positioning</span> for the close button.</p>
+            </div>
+
+            <div class="code-block">
+/* CSS Solution */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal {
+    position: relative;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+            </div>
+        </div>
+
+        <!-- Slide 16: Practice Problem 3 -->
+        <div class="slide">
+            <h2>Practice Problem 3</h2>
+            <div class="practice-problem">
+                <h3>🎯 Challenge: Card Layout with Overlays</h3>
+                <p><strong>Task:</strong> Create a product card that:</p>
+                <ul>
+                    <li>Has an image that fills the card width</li>
+                    <li>Contains a price tag overlay in the top-right corner</li>
+                    <li>Has a "Sale" badge in the top-left corner</li>
+                    <li>Shows product details below the image</li>
+                    <li>Text should not overflow outside the card</li>
+                    <li>Hover effect reveals additional content</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<!-- HTML Structure -->
+&lt;div class="product-card"&gt;
+    &lt;div class="image-container"&gt;
+        &lt;img src="product.jpg" alt="Product"&gt;
+        &lt;div class="sale-badge"&gt;SALE&lt;/div&gt;
+        &lt;div class="price-tag"&gt;$29.99&lt;/div&gt;
+        &lt;div class="hover-overlay"&gt;
+            &lt;button&gt;Add to Cart&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="product-info"&gt;
+        &lt;h3&gt;Product Name&lt;/h3&gt;
+        &lt;p&gt;Product description...&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+
+            <p><strong>Consider:</strong> How to position the badges? How to handle text overflow? What about the hover effect?</p>
+        </div>
+
+        <!-- Slide 17: Solution 3 -->
+        <div class="slide">
+            <h2>Solution 3: Product Card</h2>
+            <div class="solution">
+                <h3>✅ Solution Explanation</h3>
+                <p>We use <span class="highlight">position: relative</span> on the container with <span class="highlight">absolute positioning</span> for overlays and badges.</p>
+            </div>
+
+            <div class="code-block">
+/* CSS Solution */
+.product-card {
+    width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sale-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.price-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-container:hover .hover-overlay {
+    opacity: 1;
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+            </div>
+        </div>
+
+        <!-- Slide 18: Real-world Implementation -->
+        <div class="slide">
+            <h2>Real-world Implementation</h2>
+            <p>Let's see how these concepts work together in a complete portfolio project.</p>
+            
+            <div class="example-container">
+                <h3>Portfolio Hero Section with Fixed Navigation</h3>
+                <div class="code-block">
+/* Fixed Navigation Header */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Profile Image Overlay */
+.profile-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Background Animation */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('pattern.png') repeat;
+    animation: float 20s linear infinite;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+@keyframes float {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-50px) translateY(-50px); }
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Common Pitfalls -->
+        <div class="slide">
+            <h2>Common Pitfalls & Solutions</h2>
+            <div class="example-container">
+                <h3>❌ Common Mistakes:</h3>
+                <ul>
+                    <li><strong>Z-index not working:</strong> Element must be positioned (not static)</li>
+                    <li><strong>Absolute element not positioning correctly:</strong> Parent needs position: relative</li>
+                    <li><strong>Sticky not sticking:</strong> Check if parent has overflow: hidden</li>
+                    <li><strong>Fixed element behind other content:</strong> Insufficient z-index value</li>
+                    <li><strong>Overflow issues on mobile:</strong> Use overflow-x: auto for horizontal scrolling</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* ❌ Wrong */
+.tooltip {
+    z-index: 999; /* Won't work without position */
+}
+
+/* ✅ Correct */
+.tooltip {
+    position: absolute;
+    z-index: 999;
+}
+
+/* ❌ Wrong */
+.parent {
+    overflow: hidden; /* Prevents sticky from working */
+}
+.sticky-child {
+    position: sticky;
+    top: 0;
+}
+
+/* ✅ Correct */
+.parent {
+    /* Remove overflow: hidden or use overflow: visible */
+}
+.sticky-child {
+    position: sticky;
+    top: 0;
+}
+            </div>
+        </div>
+
+        <!-- Slide 20: Performance Considerations -->
+        <div class="slide">
+            <h2>Performance Best Practices</h2>
+            <div class="example-container">
+                <h3>Optimization Tips:</h3>
+                <ul>
+                    <li><strong>Use transform instead of changing position:</strong> Better for animations</li>
+                    <li><strong>Limit fixed/sticky elements:</strong> Can cause performance issues</li>
+                    <li><strong>Use will-change property:</strong> Hint browser for optimization</li>
+                    <li><strong>Avoid complex stacking contexts:</strong> Keep z-index values reasonable</li>
+                    <li><strong>Use contain property:</strong> Isolate expensive operations</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Performance Optimized Animations */
+.moving-element {
+    position: absolute;
+    will-change: transform;
+    /* Use transform instead of changing top/left */
+    transform: translateX(100px) translateY(50px);
+    transition: transform 0.3s ease;
+}
+
+/* Contain expensive operations */
+.modal {
+    position: fixed;
+    contain: layout style paint;
+    z-index: 1000;
+}
+
+/* Efficient sticky header */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    contain: layout;
+    will-change: transform;
+}
+            </div>
+        </div>
+
+        <!-- Slide 21: Browser Compatibility -->
+        <div class="slide">
+            <h2>Browser Compatibility & Fallbacks</h2>
+            <div class="example-container">
+                <h3>Support Status:</h3>
+                <ul>
+                    <li><strong>position: static, relative, absolute, fixed:</strong> ✅ Universal support</li>
+                    <li><strong>position: sticky:</strong> ✅ Modern browsers (IE 11 needs -ms- prefix)</li>
+                    <li><strong>z-index:</strong> ✅ Universal support</li>
+                    <li><strong>overflow:</strong> ✅ Universal support</li>
+                    <li><strong>backdrop-filter:</strong> ⚠️ Limited support (use fallbacks)</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Progressive Enhancement for Sticky */
+.navbar {
+    position: relative; /* Fallback */
+    position: -webkit-sticky; /* Safari */
+    position: sticky; /* Modern browsers */
+    top: 0;
+}
+
+/* Backdrop-filter with fallback */
+.modal {
+    background: rgba(0, 0, 0, 0.8); /* Fallback */
+    backdrop-filter: blur(10px); /* Enhanced */
+}
+
+/* Feature detection with CSS */
+@supports (position: sticky) {
+    .navbar {
+        position: sticky;
+        top: 0;
+    }
+}
+
+@supports not (position: sticky) {
+    .navbar {
+        position: fixed;
+        top: 0;
+    }
+}
+            </div>
+        </div>
+
+        <!-- Slide 22: Accessibility Considerations -->
+        <div class="slide">
+            <h2>Accessibility & UX Best Practices</h2>
+            <div class="example-container">
+                <h3>Accessibility Guidelines:</h3>
+                <ul>
+                    <li><strong>Fixed/Sticky elements:</strong> Don't cover important content</li>
+                    <li><strong>Scrollable areas:</strong> Ensure keyboard navigation works</li>
+                    <li><strong>Z-index order:</strong> Should follow logical tab order</li>
+                    <li><strong>Focus management:</strong> Trap focus in modals</li>
+                    <li><strong>Reduced motion:</strong> Respect user preferences</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .animated-element {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Ensure scrollable areas are keyboard accessible */
+.scrollable-area {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.scrollable-area:focus {
+    outline: 2px solid #007acc;
+    outline-offset: 2px;
+}
+
+/* Modal focus management */
+.modal {
+    position: fixed;
+    z-index: 1000;
+}
+
+.modal:focus {
+    outline: none; /* Remove default outline */
+}
+
+.modal-content {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.modal-content:focus-within {
+    outline-color: #007acc;
+}
+            </div>
+        </div>
+
+        <!-- Slide 23: Home Project Guide -->
+        <div class="slide">
+            <h2>Home Project: Portfolio Enhancement</h2>
+            <div class="practice-problem">
+                <h3>🏠 Project Requirements:</h3>
+                <p><strong>Task:</strong> Enhance your portfolio with:</p>
+                <ul>
+                    <li><strong>Fixed Navigation:</strong> Create a navigation bar that stays at the top</li>
+                    <li><strong>Hero Section:</strong> Add a full-screen hero with your profile image overlay</li>
+                    <li><strong>Sticky Section Headers:</strong> Make section titles stick when scrolling</li>
+                    <li><strong>Project Cards:</strong> Create cards with hover overlays and badges</li>
+                    <li><strong>Scroll-to-Top Button:</strong> Fixed position button that appears on scroll</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Project Structure */
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Your Portfolio&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar"&gt;
+        &lt;div class="nav-brand"&gt;Your Name&lt;/div&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#projects"&gt;Projects&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+    
+    &lt;main&gt;
+        &lt;section id="home" class="hero"&gt;
+            &lt;div class="hero-content"&gt;
+                &lt;div class="profile-image-overlay"&gt;
+                    &lt;img src="profile.jpg" alt="Your Name"&gt;
+                &lt;/div&gt;
+                &lt;h1&gt;Welcome to My Portfolio&lt;/h1&gt;
+                &lt;p&gt;Your tagline here&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+        
+        &lt;section id="projects"&gt;
+            &lt;h2 class="sticky-header"&gt;My Projects&lt;/h2&gt;
+            &lt;div class="projects-grid"&gt;
+                &lt;!-- Project cards go here --&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+    &lt;/main&gt;
+    
+    &lt;button class="scroll-to-top" onclick="scrollToTop()"&gt;↑&lt;/button&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </div>
+        </div>
+
+        <!-- Slide 24: Project Implementation Tips -->
+        <div class="slide">
+            <h2>Implementation Tips & Checklist</h2>
+            <div class="example-container">
+                <h3>✅ Implementation Checklist:</h3>
+                <ul>
+                    <li><strong>Fixed Navigation:</strong> Use position: fixed with high z-index</li>
+                    <li><strong>Hero Section:</strong> Use position: relative for overlay positioning</li>
+                    <li><strong>Profile Image:</strong> Use position: absolute with transform centering</li>
+                    <li><strong>Sticky Headers:</strong> Use position: sticky with appropriate top value</li>
+                    <li><strong>Project Cards:</strong> Use position: relative with absolute overlays</li>
+                    <li><strong>Scroll Button:</strong> Use position: fixed with JavaScript toggle</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Essential CSS for Home Project */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+.hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.profile-image-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.sticky-header {
+    position: sticky;
+    top: 80px; /* Account for fixed navbar height */
+    background: white;
+    z-index: 10;
+    padding: 1rem 0;
+    border-bottom: 2px solid #3498db;
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+}
+            </div>
+        </div>
+
+        <!-- Slide 25: Summary -->
+        <div class="slide">
+            <h2>Summary & Key Takeaways</h2>
+            <div class="example-container">
+                <h3>🎯 What We've Learned:</h3>
+                <ul>
+                    <li><strong>CSS Positioning:</strong> static, relative, absolute, fixed, sticky</li>
+                    <li><strong>Z-index:</strong> Controls stacking order of positioned elements</li>
+                    <li><strong>Stacking Context:</strong> 3D conceptualization of element layers</li>
+                    <li><strong>Overflow:</strong> Controls content that exceeds container boundaries</li>
+                    <li><strong>Real-world Applications:</strong> Navigation bars, modals, cards, overlays</li>
+                </ul>
+            </div>
+
+            <div class="example-container">
+                <h3>💡 Best Practices:</h3>
+                <ul>
+                    <li>Use positioning sparingly - start with normal document flow</li>
+                    <li>Keep z-index values organized and reasonable (1-1000 range)</li>
+                    <li>Consider performance implications of fixed/sticky elements</li>
+                    <li>Test on different screen sizes and devices</li>
+                    <li>Ensure accessibility with proper focus management</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+/* Remember the positioning hierarchy */
+static (default) → relative → absolute → fixed → sticky
+
+/* Z-index only works with positioned elements */
+position: relative; /* or absolute, fixed, sticky */
+z-index: 10; /* Now this works! */
+
+/* Overflow control */
+overflow: hidden;  /* Hide excess content */
+overflow: auto;    /* Show scrollbars when needed */
+overflow: scroll;  /* Always show scrollbars */
+            </div>
+        </div>
+
+        <!-- Slide 26: Next Steps -->
+        <div class="slide">
+            <h2>Next Steps & Resources</h2>
+            <div class="example-container">
+                <h3>🚀 Continue Learning:</h3>
+                <ul>
+                    <li><strong>Advanced CSS:</strong> CSS Grid, Flexbox, Animations</li>
+                    <li><strong>Responsive Design:</strong> Media queries, mobile-first approach</li>
+                    <li><strong>CSS Frameworks:</strong> Bootstrap, Tailwind CSS</li>
+                    <li><strong>CSS Preprocessors:</strong> Sass, Less</li>
+                    <li><strong>Modern CSS:</strong> CSS Variables, Container queries</li>
+                </ul>
+            </div>
+
+            <div class="example-container">
+                <h3>📚 Recommended Resources:</h3>
+                <ul>
+                    <li><strong>MDN Web Docs:</strong> Comprehensive CSS documentation</li>
+                    <li><strong>CSS-Tricks:</strong> Practical tutorials and examples</li>
+                    <li><strong>CodePen:</strong> Experiment with positioning examples</li>
+                    <li><strong>Can I Use:</strong> Check browser compatibility</li>
+                    <li><strong>Web.dev:</strong> Performance and best practices</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <h3>🎉 Thank You!</h3>
+                <p style="font-size: 1.2em; color: #7f8c8d;">
+                    Questions? Let's discuss your portfolio projects!
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button" onclick="previousSlide()" id="prevBtn">Previous</button>
+            <span class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">26</span>
+            </span>
+            <button class="nav-button" onclick="nextSlide()" id="nextBtn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+        
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') previousSlide();
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Scroll to top function for demo
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show/hide scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollBtn = document.querySelector('.fixed-demo');
+            if (scrollBtn) {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.style.opacity = '1';
+                } else {
+                    scrollBtn.style.opacity = '0.8';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
